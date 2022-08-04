@@ -27,7 +27,7 @@ let persons = [
 
 
 app.get('/', (request, response) => {
-    response.send(JSON.stringify(persons))
+    response.json(persons)
   })
   
 app.get('/api/persons', (request, response) => {
@@ -35,13 +35,25 @@ app.get('/api/persons', (request, response) => {
   })
 
   app.get('/info', (request, response) => {
-    var timeStamp = new Date(Date.now());
+    var timeStamp = new Date(Date.now()).toLocaleString();
    
-    response.send(`<li> ${timeStamp.toUTCString()} </li>
+    response.send(`<li> ${timeStamp} </li>
      <li>${persons.length} entries in phonebook </li>`)
   })
 
+  app.get('/api/persons/:id',(request,response)=> {
+    const id = Number(request.params.id)
+    console.log(id)
+    const person = persons.find(person =>{
+        console.log(person.id, typeof person.id, id, typeof id, person.id===id)
+        return person.id === id
+    })
+    console.log(person)
+    response.send(person)
+  })
 const PORT = 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })
+
+  
