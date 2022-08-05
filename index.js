@@ -1,6 +1,11 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 app.use(express.json())
+app.use(morgan('tiny'))
+morgan.token('host', (request,response) => {
+    return request.hostname
+})
 
 let persons = [
     { 
@@ -60,6 +65,10 @@ app.post('/api/persons',(request,response) => {
     persons = persons.concat(person)
     console.log(person)
     response.json(person)
+    morgan.token('data', (request) => {
+        return JSON.stringify(request.body)
+    })
+    
 }
   })
 
@@ -67,6 +76,7 @@ app.get('/', (request, response) => {
     response.json(persons)
     
   })
+  
  
 app.get('/api/persons', (request, response) => {
     response.end(JSON.stringify(persons))
