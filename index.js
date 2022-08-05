@@ -41,21 +41,28 @@ app.get('/api/persons', (request, response) => {
      <li>${persons.length} entries in phonebook </li>`)
   })
 
-  app.get('/api/persons/:id',(request,response)=> {
+//   app.get('/api/persons/:id',(request,response)=> {
+//     const id = Number(request.params.id)
+//     console.log(id)
+//     const person = persons.find(person =>{
+//         console.log(person.id, typeof person.id, id, typeof id, person.id===id)
+//         return person.id === id
+//     })
+//     if (person) {
+//         response.send(person)
+//         console.log(person)
+//     } else {
+//         response.status(404).end()
+//     }
+    
+    
+//   })
+
+  app.delete('/api/notes/:id', (request, response) => {
     const id = Number(request.params.id)
-    console.log(id)
-    const person = persons.find(person =>{
-        console.log(person.id, typeof person.id, id, typeof id, person.id===id)
-        return person.id === id
-    })
-    if (person) {
-        response.send(person)
-        console.log(person)
-    } else {
-        response.status(404).end()
-    }
-    
-    
+    notes = notes.filter(note => note.id !== id)
+  
+    response.status(204).end()
   })
 const PORT = 3001
 app.listen(PORT, () => {
