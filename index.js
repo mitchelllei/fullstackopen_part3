@@ -48,8 +48,14 @@ app.get('/api/persons', (request, response) => {
         console.log(person.id, typeof person.id, id, typeof id, person.id===id)
         return person.id === id
     })
-    console.log(person)
-    response.send(person)
+    if (person) {
+        response.send(person)
+        console.log(person)
+    } else {
+        response.status(404).end()
+    }
+    
+    
   })
 const PORT = 3001
 app.listen(PORT, () => {
