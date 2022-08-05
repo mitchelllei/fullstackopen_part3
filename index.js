@@ -3,6 +3,9 @@ const morgan = require('morgan')
 const app = express()
 app.use(express.json())
 // tiny output + other data
+const cors = require('cors')
+
+app.use(cors())
 
 
 app.use(morgan(function (tokens, request, response) {
