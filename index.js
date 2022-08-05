@@ -33,17 +33,29 @@ app.post('/api/persons',(request,response) => {
         return maxId +1
     }
     
-    const body1 = request.body
-    console.log("Body is ",body1)
-    if (!body1.false) {
+    const contentReceived = request.body
+    console.log("Body is ",contentReceived)
+    if (!contentReceived) {
         return response.status(400).json({
-            error: `Content missing ${body1}`
+            error: `Content missing ${contentReceived}`
         })
-    } else {
+    } 
+    else if(!contentReceived.name || !contentReceived.number) {
+        return response.status(400).json({
+            error: "name or number is missing"
+        })
+    }
+
+    else if(persons.map(person => person.name).includes(contentReceived.name)){
+        return response.status(400).json({
+            error: "name is already in phonebook"
+        })
+    }
+    else {
     const person = {
         name: request.body.name,
         number: request.body.number,
-        id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+        id: Math.floor(Math.random() * 100000000000000)
     }
     persons = persons.concat(person)
     console.log(person)
