@@ -3,11 +3,16 @@ const morgan = require('morgan')
 const app = express()
 app.use(express.json())
 // tiny output + other data
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
-morgan.token('host', (request,response) => {
-    return request.hostname
-})
-
+app.use(morgan(function (tokens, request, response) {
+    return [
+      tokens.method(request, response),
+      tokens.url(request, response),
+      tokens.status(request, response),
+      tokens.res(request, response, 'content-length'), '-',
+      tokens['response-time'](request, response), 'ms',
+      request.method === 'POST' ? JSON.stringify(request.body) : null
+    ]
+  }))
 let persons = [
     { 
       "id": 1,
