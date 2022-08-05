@@ -3,15 +3,22 @@ const morgan = require('morgan')
 const app = express()
 app.use(express.json())
 // tiny output + other data
+
+
 app.use(morgan(function (tokens, request, response) {
+    if (request.method === "POST") {
+        return JSON.stringify(request.body)
+          
+     } else {
     return [
       tokens.method(request, response),
       tokens.url(request, response),
       tokens.status(request, response),
       tokens.res(request, response, 'content-length'), '-',
-      tokens['response-time'](request, response), 'ms',
-      request.method === 'POST' ? JSON.stringify(request.body) : null
+      tokens['response-time'](request, response), 'ms'
+      
     ]
+}
   }))
 let persons = [
     { 
