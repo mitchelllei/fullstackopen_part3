@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd ../fullstackopen/part2/part2b/ && npm run build && cp -r build E:/fullstackopen_part3",
     "deploy": "git push heroku main",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",    
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
     "logs:prod": "heroku logs --tail"
   },
   "repository": {
@@ -25,12 +25,13 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.1",
+    "mongoose": "^6.5.2",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"
   },
-   "resolutions": {
+  "resolutions": {
     "mini-css-extract-plugin": "2.4.5"
   }
 }
