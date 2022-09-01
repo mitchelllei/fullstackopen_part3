@@ -1,3 +1,5 @@
+const Person = require('./models/person')
+
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
@@ -94,10 +96,14 @@ app.get('/', (request, response) => {
     
   })
   
- 
-app.get('/api/persons', (request, response) => {
-    response.end(JSON.stringify(persons))
+  app.get('/api/persons', (request, response) => {
+    Person.find({}).then(persons => {
+      response.json(persons)
+    })
   })
+// app.get('/api/persons', (request, response) => {
+//     response.end(JSON.stringify(persons))
+//   })
 
   app.get('/info', (request, response) => {
     var timeStamp = new Date(Date.now()).toLocaleString();
@@ -135,8 +141,14 @@ app.get('/api/persons', (request, response) => {
   
 
   const PORT = process.env.PORT || 3001
+
+ 
+  
+ 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })
+
+
 
   
