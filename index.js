@@ -1,5 +1,10 @@
 const Person = require('./models/person')
 
+// require('dotenv').config()
+const dotenv = require("dotenv");
+
+dotenv.config();
+
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
@@ -49,47 +54,62 @@ let persons = [
     }
 ]
 
-app.post('/api/persons',(request,response) => {
-    const generateId = () => {
-        const maxId = persons.length > 0 
-        ? Math.max(...persons.map(n=> n.id))
-        : 0
-        return maxId +1
-    }
-    
-    const contentReceived = request.body
-    console.log("Body is ",contentReceived)
-    if (!contentReceived) {
-        return response.status(400).json({
-            error: `Content missing ${contentReceived}`
-        })
-    } 
-    else if(!contentReceived.name || !contentReceived.number) {
-        return response.status(400).json({
-            error: "name or number is missing"
-        })
-    }
+app.post('/api/persons', (request, response) => {
+  const body = request.body
 
-    else if(persons.map(person => person.name).includes(contentReceived.name)){
-        return response.status(400).json({
-            error: "name is already in phonebook"
-        })
-    }
-    else {
-    const person = {
-        name: request.body.name,
-        number: request.body.number,
-        id: Math.floor(Math.random() * 100000000000000)
-    }
-    persons = persons.concat(person)
-    console.log(person)
-    response.json(person)
-    morgan.token('data', (request) => {
-        return JSON.stringify(request.body)
-    })
-    
-}
+  if (body.content === undefined) {
+    return response.status(400).json({ error: 'content missing' })
+  }
+  const person = new Person({
+    name: enteredName,
+    number: enteredNumber,
   })
+  person.save().then(savedNote => {
+    response.json(savedNote)
+  })
+})
+
+// app.post('/api/persons',(request,response) => {
+//     const generateId = () => {
+//         const maxId = persons.length > 0 
+//         ? Math.max(...persons.map(n=> n.id))
+//         : 0
+//         return maxId +1
+//     }
+    
+    
+//     console.log("Body is ",contentReceived)
+//     if (!contentReceived) {
+//         return response.status(400).json({
+//             error: `Content missing ${contentReceived}`
+//         })
+//     } 
+//     else if(!contentReceived.name || !contentReceived.number) {
+//         return response.status(400).json({
+//             error: "name or number is missing"
+//         })
+//     }
+
+//     else if(persons.map(person => person.name).includes(contentReceived.name)){
+//         return response.status(400).json({
+//             error: "name is already in phonebook"
+//         })
+//     }
+//     else {
+//     const person = {
+//         name: request.body.name,
+//         number: request.body.number,
+//         id: Math.floor(Math.random() * 100000000000000)
+//     }
+//     persons = persons.concat(person)
+//     console.log(person)
+//     response.json(person)
+//     morgan.token('data', (request) => {
+//         return JSON.stringify(request.body)
+//     })
+    
+// }
+  
 
 app.get('/', (request, response) => {
     response.json(persons)
@@ -113,24 +133,29 @@ app.get('/', (request, response) => {
      
   })
 
-  app.get('/api/persons/:id',(request,response)=> {
-    const id = Number(request.params.id)
-    console.log(id)
-    const person = persons.find(person =>{
-        console.log(person.id, typeof person.id, id, typeof id, person.id===id)
-        return person.id === id
-    })
-    if (person) {
-        response.send(person)
-        console.log(person)
+  // app.get('/api/persons/:id',(request,response)=> {
+  //   const id = Number(request.params.id)
+  //   console.log(id)
+  //   const person = persons.find(person =>{
+  //       console.log(person.id, typeof person.id, id, typeof id, person.id===id)
+  //       return person.id === id
+  //   })
+  //   if (person) {
+  //       response.send(person)
+  //       console.log(person)
        
-    } else {
-        response.status(404).end()
-    }
+  //   } else {
+  //       response.status(404).end()
+  //   }
     
     
+  // })
+  
+  app.get('/api/notes/:id', (request, response) => {
+    Person.findById(request.params.id).then(person => {
+      response.json(person)
+    })
   })
-
   app.delete('/api/notes/:id', (request, response) => {
     const id = Number(request.params.id)
     notes = notes.filter(note => note.id !== id)
@@ -140,7 +165,7 @@ app.get('/', (request, response) => {
 
   
 
-  const PORT = process.env.PORT || 3001
+  const PORT = process.env.PORT
 
  
   

@@ -1,5 +1,7 @@
+const dotenv = require("dotenv");
+
+dotenv.config();
 const mongoose = require('mongoose')
-const url = `mongodb+srv://mitchelll:${password}@cluster0.gzajtfn.mongodb.net/personApp?retryWrites=true&w=majority`
 const url = process.env.MONGODB_URI
 
 console.log('connecting to', url)
@@ -12,7 +14,6 @@ mongoose.connect(url)
     console.log('error connecting to MongoDB:', error.message)
   })
 
-  const Person = mongoose.model('Person', personSchema)
 
   const personSchema = new mongoose.Schema({
     name: String,
@@ -25,6 +26,7 @@ mongoose.connect(url)
       delete returnedObject.__v
     }
   })
-  module.exports = mongoose.model('Person', personSchema)
 
-  sdgsdgasf
+  
+  const Person = mongoose.model('Person', personSchema)
+  module.exports = mongoose.model('Person', personSchema)
