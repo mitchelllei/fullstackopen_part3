@@ -1,36 +1,47 @@
+const express = require('express')
+const app = express()
+const cors = require('cors')
+require('dotenv').config()
 const Person = require('./models/person')
 
-// require('dotenv').config()
-const dotenv = require("dotenv");
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+app.use(requestLogger)
+// const dotenv = require("dotenv");
 
-dotenv.config();
+// dotenv.config();
 
-const express = require('express')
+
 const morgan = require('morgan')
-const app = express()
+
 app.use(express.json())
 app.use(express.static('build'))
 // tiny output + other data
-const cors = require('cors')
+
 
 app.use(cors())
 
 
-app.use(morgan(function (tokens, request, response) {
-    if (request.method === "POST") {
-        return JSON.stringify(request.body)
+// app.use(morgan(function (tokens, request, response) {
+//     if (request.method === "POST") {
+//         return JSON.stringify(request.body)
           
-     } else {
-    return [
-      tokens.method(request, response),
-      tokens.url(request, response),
-      tokens.status(request, response),
-      tokens.res(request, response, 'content-length'), '-',
-      tokens['response-time'](request, response), 'ms'
+//      } else {
+//     return [
+//       tokens.method(request, response),
+//       tokens.url(request, response),
+//       tokens.status(request, response),
+//       tokens.res(request, response, 'content-length'), '-',
+//       tokens['response-time'](request, response), 'ms'
       
-    ]
-}
-  }))
+//     ]
+// }
+//   }))
 let persons = [
     { 
       "id": 1,
@@ -55,14 +66,14 @@ let persons = [
 ]
 
 app.post('/api/persons', (request, response) => {
-  const body = request.body
+  const body1 = request.body
 
-  if (body.content === undefined) {
+  if (body1.name === undefined) {
     return response.status(400).json({ error: 'content missing' })
   }
   const person = new Person({
-    name: enteredName,
-    number: enteredNumber,
+    name: request.body.name,
+    number: Number(request.body.number),
   })
   person.save().then(savedNote => {
     response.json(savedNote)
@@ -121,9 +132,6 @@ app.get('/', (request, response) => {
       response.json(persons)
     })
   })
-// app.get('/api/persons', (request, response) => {
-//     response.end(JSON.stringify(persons))
-//   })
 
   app.get('/info', (request, response) => {
     var timeStamp = new Date(Date.now()).toLocaleString();
