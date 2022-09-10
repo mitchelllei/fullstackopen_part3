@@ -28,21 +28,7 @@ app.use(requestLogger)
 app.use(cors())
 
 
-// app.use(morgan(function (tokens, request, response) {
-//     if (request.method === "POST") {
-//         return JSON.stringify(request.body)
-          
-//      } else {
-//     return [
-//       tokens.method(request, response),
-//       tokens.url(request, response),
-//       tokens.status(request, response),
-//       tokens.res(request, response, 'content-length'), '-',
-//       tokens['response-time'](request, response), 'ms'
-      
-//     ]
-// }
-//   }))
+
 let persons = [
     { 
       "id": 1,
@@ -65,6 +51,10 @@ let persons = [
       "number": "39-23-6423122"
     }
 ]
+app.get('/', (request, response) => {
+  response.json(persons)
+  
+})
 
 app.post('/api/persons', (request, response) => {
   const body1 = request.body
@@ -80,6 +70,46 @@ app.post('/api/persons', (request, response) => {
     response.json(savedNote)
   })
 })
+
+  
+  app.get('/api/persons', (request, response) => {
+    Person.find({}).then(persons => {
+      response.json(persons)
+    })
+  })
+
+  app.get('/info', (request, response) => {
+    var timeStamp = new Date(Date.now()).toLocaleString();
+   
+    response.send(`<li> ${timeStamp} </li>
+     <li>${persons.length} entries in phonebook </li>`)
+     
+  })
+
+  app.delete('/api/persons/:id', (request, response,next) => {
+    Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    // notes = notes.filter(note => note.id !== id)
+  
+    
+  })
+ 
+  app.get('/api/persons/:id', (request, response, next) => {
+    Person.findById(request.params.id)
+    .then(person => {
+      if(person) {
+        response.json(person)
+      }
+      else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
+    })
+
+  
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
@@ -97,7 +127,16 @@ const errorHandler = (error, request, response, next) => {
 
 app.use(errorHandler)
 
+const PORT = process.env.PORT
 
+ 
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
+
+
+
+  
 // app.post('/api/persons',(request,response) => {
 //     const generateId = () => {
 //         const maxId = persons.length > 0 
@@ -138,26 +177,6 @@ app.use(errorHandler)
 //     })
     
 // }
-  
-
-app.get('/', (request, response) => {
-    response.json(persons)
-    
-  })
-  
-  app.get('/api/persons', (request, response) => {
-    Person.find({}).then(persons => {
-      response.json(persons)
-    })
-  })
-
-  app.get('/info', (request, response) => {
-    var timeStamp = new Date(Date.now()).toLocaleString();
-   
-    response.send(`<li> ${timeStamp} </li>
-     <li>${persons.length} entries in phonebook </li>`)
-     
-  })
 
   // app.get('/api/persons/:id',(request,response)=> {
   //   const id = Number(request.params.id)
@@ -176,38 +195,19 @@ app.get('/', (request, response) => {
     
     
   // })
-  
-  app.get('/api/persons/:id', (request, response, next) => {
-    Person.findById(request.params.id)
-    .then(person => {
-      if(person) {
-        response.json(person)
-      }
-      else {
-        response.status(404).end()
-      }
-    })
-    .catch(error => next(error))
-    })
-  
-  app.delete('/api/notes/:id', (request, response) => {
-    const id = Number(request.params.id)
-    notes = notes.filter(note => note.id !== id)
-  
-    response.status(204).end()
-  })
 
-  
-
-  const PORT = process.env.PORT
-
- 
-  
- 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-  })
-
-
-
-  
+  // app.use(morgan(function (tokens, request, response) {
+//     if (request.method === "POST") {
+//         return JSON.stringify(request.body)
+          
+//      } else {
+//     return [
+//       tokens.method(request, response),
+//       tokens.url(request, response),
+//       tokens.status(request, response),
+//       tokens.res(request, response, 'content-length'), '-',
+//       tokens['response-time'](request, response), 'ms'
+      
+//     ]
+// }
+//   }))
