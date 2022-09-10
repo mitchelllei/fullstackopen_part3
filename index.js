@@ -18,14 +18,16 @@ const requestLogger = (request, response, next) => {
 
 
 const morgan = require('morgan')
-app.use(express.static('build'))
 app.use(express.json())
 app.use(requestLogger)
+app.use(cors())
+app.use(express.static('build'))
+
 
 // tiny output + other data
 
 
-app.use(cors())
+
 
 
 
@@ -51,6 +53,7 @@ let persons = [
       "number": "39-23-6423122"
     }
 ]
+
 app.get('/', (request, response) => {
   response.json(persons)
   
@@ -86,14 +89,14 @@ app.post('/api/persons', (request, response) => {
      
   })
 
-  app.delete('/api/persons/:id', (request, response,next) => {
+  app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndRemove(request.params.id)
     .then(result => {
       response.status(204).end()
     })
+    .catch(error => next(error))
     // notes = notes.filter(note => note.id !== id)
   
-    
   })
  
   app.get('/api/persons/:id', (request, response, next) => {
@@ -106,8 +109,10 @@ app.post('/api/persons', (request, response) => {
         response.status(404).end()
       }
     })
-    .catch(error => next(error))
+    .catch(error => {
+      next(error)
     })
+  })
 
   
 const unknownEndpoint = (request, response) => {
