@@ -11,16 +11,17 @@ const requestLogger = (request, response, next) => {
   console.log('---')
   next()
 }
-app.use(requestLogger)
+
 // const dotenv = require("dotenv");
 
 // dotenv.config();
 
 
 const morgan = require('morgan')
-
-app.use(express.json())
 app.use(express.static('build'))
+app.use(express.json())
+app.use(requestLogger)
+
 // tiny output + other data
 
 
@@ -79,6 +80,23 @@ app.post('/api/persons', (request, response) => {
     response.json(savedNote)
   })
 })
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
+app.use(errorHandler)
+
 
 // app.post('/api/persons',(request,response) => {
 //     const generateId = () => {
@@ -169,11 +187,9 @@ app.get('/', (request, response) => {
         response.status(404).end()
       }
     })
-    .catch(error => {
-      console.log(error)
-      response.status(400).send({error: 'malformatted id'})
+    .catch(error => next(error))
     })
-  })
+  
   app.delete('/api/notes/:id', (request, response) => {
     const id = Number(request.params.id)
     notes = notes.filter(note => note.id !== id)
