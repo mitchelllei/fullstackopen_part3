@@ -159,7 +159,7 @@ app.get('/', (request, response) => {
     
   // })
   
-  app.get('/api/notes/:id', (request, response) => {
+  app.get('/api/persons/:id', (request, response, next) => {
     Person.findById(request.params.id)
     .then(person => {
       if(person) {
@@ -171,7 +171,7 @@ app.get('/', (request, response) => {
     })
     .catch(error => {
       console.log(error)
-      response.status(500).end()
+      response.status(400).send({error: 'malformatted id'})
     })
   })
   app.delete('/api/notes/:id', (request, response) => {
