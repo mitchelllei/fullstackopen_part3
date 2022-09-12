@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -59,7 +63,7 @@ app.get('/', (request, response) => {
   
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response,next) => {
   const body1 = request.body
 
   if (body1.name === undefined) {
@@ -72,6 +76,7 @@ app.post('/api/persons', (request, response) => {
   person.save().then(savedNote => {
     response.json(savedNote)
   })
+  .catch(error => next(error))
 })
 
   
@@ -140,7 +145,10 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
-  } 
+   } 
+   else if (error.name === 'ValidationError') {
+    return respponse.status(400).json({error: error.message})
+  }
 
   next(error)
 }
