@@ -14,7 +14,7 @@ mongoose.connect(url)
   .catch((error) => {
     console.log('error connecting to MongoDB:', error.message)
   })
-
+  mongoose.set('runValidators', true)
 
   const personSchema = new mongoose.Schema({
     name: {
@@ -39,6 +39,6 @@ mongoose.connect(url)
     }
   })
 
-  
+  personSchema.plugin(uniqueValidator)
 //   const Person = mongoose.model('Person', personSchema)
   module.exports = mongoose.model('Person', personSchema)
