@@ -1,5 +1,7 @@
 
 const mongoose = require('mongoose')
+var uniqueValidator = require('mongoose-unique-validator');
+
 // mongoose.set('useFindAndModify', false)
 const url = process.env.MONGODB_URI
 
@@ -18,11 +20,13 @@ mongoose.connect(url)
     name: {
       type: String,
       minLength: 3,
-      required: true
+      required: true,
+      unique: true
     },
    
     number: {
       type: Number,
+      minLength: 8,
       required: true
     }
     })
