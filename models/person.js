@@ -40,5 +40,6 @@ mongoose.connect(url)
   })
 
   personSchema.plugin(uniqueValidator)
+
 //   const Person = mongoose.model('Person', personSchema)
-  module.exports = mongoose.model('Person', personSchema)
+  module.exports = mongoose.model('Person', personSchema,"persons")
